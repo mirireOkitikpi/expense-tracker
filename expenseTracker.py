@@ -22,11 +22,34 @@ MONEY_PATTERN = re.compile(r"""
 (?:\.\d{1,2})?          # rounds 12.5 to 12.50 does not permit 11.999+
 \s*$
 """,re.VERBOSE)
+def parse_gbp_amount(raw: str) -> Decimal: # str is used rather than int or float for symbols like $ and £
+    s = (raw or "").strip()
+    if not s:
+        raise ValueError("Amount if Required")
+    if not MONEY_PATTERN.match(s):
+        raise ValueError("Enter a valid amount like £12.50 or 12.50.")
+    
+    normalised = s.replace("£", "").replace(",","").strip()
+    
+    try:
+        value = Decimal(normalised)
+    except InvalidOperation:
+        raise ValueError("Enter a valid numeric amount")
+    if value <= 0:
+        raise ValueError("Amount must be greater than £0.00")
+    return value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
 def get_Expense():
     print(f"Getting Expenses")
     expense_name = input("Enter expense name: ")
-    expense_amount = float(input("Enter expense amount: "))
+
+    while True:
+        expense_input = input("Enter expense amount (e.g. £12.50 or 12.50): ")
+        try:
+            expense_amount = parse_gbp_amount(expense_input)
+            break
+        except ValueError as e:
+            print(f"Invalid amount: {e}. Please try again.")
     
     expense_categories = [
         "Food", 
