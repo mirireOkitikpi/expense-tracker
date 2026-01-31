@@ -1,4 +1,6 @@
 from expense import Expense
+import re 
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 def main():
 
@@ -10,6 +12,16 @@ def main():
     #read the file and categorise the expenses 
     categorise_Expense()
     pass
+
+MONEY_PATTERN = re.compile(r"""
+^\s*£?\s*
+(?:
+    \d{1,3}(?:,\d{3})* # comma formatting eg; 1,000 and 1,000,000
+    | \d+
+)
+(?:\.\d{1,2})?          # rounds 12.5 to 12.50 does not permit 11.999+
+\s*$
+""",re.VERBOSE)
 
 def get_Expense():
     print(f"Getting Expenses")
