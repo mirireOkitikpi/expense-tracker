@@ -33,3 +33,8 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# Google Sheets credentials
+credentials.json
+*-credentials.json
+service-account*.json
