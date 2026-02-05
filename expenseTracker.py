@@ -3,19 +3,17 @@ import re
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from datetime import date
 import gspread
-from google.oauth2.service_account import Credentials
+#from google.oauth2.service_account import Credentials
 
 SPREADSHEET_NAME = "Expense Tracker"
 CREDENTIALS_FILE = "credentials.json"
 
 def get_sheets_client():
-    """Authenticate and return a gspread client."""
-    scopes = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive"
-    ]
-    creds = Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=scopes)
-    return gspread.authorize(creds)
+    """Authenticate and return a gspread client using OAuth (user login)."""
+    return gspread.oauth(
+        credentials_filename="credentials.json",
+        authorized_user_filename="token.json",
+    )
 
 def get_or_create_spreadsheet(client):
     """Open existing spreadsheet or create a new one with headers."""
